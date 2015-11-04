@@ -154,3 +154,19 @@ class cp2k_wavefunction:
                     self.writeline(self.vecs_all[i][j])
         f = open(filename, 'wb')
         f.write(self.fileContent)
+
+    def add_H(self, hydrogen_shells = [1,1,3]):
+        """
+        function to add a proton basis in the wfn.
+        """
+        self.natom_read += 1
+        self.nao_read += sum(hydrogen_shells)
+        self.nset_info = np.append(self.nset_info, 1)
+        self.nshell_info = np.append(self.nshell_info, len(hydrogen_shells))
+        hydrogen_nso_info = np.zeros(self.nshell_max)
+        for i in range(len(hydrogen_shells)):
+            hydrogen_nso_info[i] = hydrogen_shells[i]
+        self.nso_info = np.append(self.nso_info, hydrogen_nso_info)
+        hydrogen_vecs = np.zeros(sum(hydrogen_shells))
+        for i in range(self.nmo_all[0]):
+            self.vecs_all[0][i] = np.append(self.vecs_all[0][i],  hydrogen_vecs)
